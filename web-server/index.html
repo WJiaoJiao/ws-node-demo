@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>websocket-node-demo</title>
+  </head>
+  <body>
+    <button id="button_send">发送消息</button>
+    <div id="content"></div>
+  </body>
+  <script>
+    let ws = null;
+    function WebSocketTest() {
+      if ('WebSocket' in window) {
+        // 浏览器支持 WebSocket
+        console.log('您的浏览器支持 WebSocket!');
+
+        // 打开一个 web socket
+        ws = new WebSocket('ws://localhost:8002');
+
+        ws.onopen = function() {
+          // Web Socket 已连接上
+          console.log('连接成功...');
+        };
+
+        ws.onmessage = function(evt) {
+          var received_msg = evt.data;
+          console.log(received_msg)
+          let msg_node = document.createElement('div');
+          msg_node.innerHTML = '接收数据：' + received_msg;
+          document.getElementById('content').appendChild(msg_node);
+          console.log('数据已接收...');
+        };
+
+        // 关闭 websocket
+        ws.onclose = function() {
+          ws = null;
+          console.log('连接已关闭...');
+        };
+      } else {
+        // 浏览器不支持 WebSocket
+        console.log('您的浏览器不支持 WebSocket!');
+      }
+    }
+
+    WebSocketTest();
+
+    document.getElementById('button_send').onclick = function() {
+      let senData = {
+        code: 1000,
+        msg: '发送数据'
+      }
+      ws.send(JSON.stringify(senData));
+    }
+  </script>
+</html>
